@@ -6,9 +6,17 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Configure Turbopack to handle the problematic modules
+  turbopack: {
+    resolveAlias: {
+      'thread-stream': false,
+      'pino-pretty': false,
+      'worker_threads': false,
+    },
+  },
+  // Keep webpack for fallback, but Turbopack will be used
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Don't attempt to bundle these packages on the client
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -20,28 +28,14 @@ const nextConfig = {
         os: false,
         util: false,
         url: false,
+        http: false,
+        https: false,
+        zlib: false,
         'pino-pretty': false,
         'thread-stream': false,
         'worker_threads': false,
       };
-
-      // Exclude problematic modules from client-side bundles
-      config.plugins.push(
-        new config.optimization.splitChunks.cacheGroups.constructor({
-          test: /[\\/]node_modules[\\/](thread-stream|pino)[\\/]/,
-          name: 'vendor-pino',
-          enforce: true,
-        })
-      );
     }
-    
-    // Add externals for SSR
-    config.externals = [
-      ...(config.externals || []),
-      { 'thread-stream': 'commonjs thread-stream' },
-      { 'pino-pretty': 'commonjs pino-pretty' },
-    ];
-    
     return config;
   },
 }
