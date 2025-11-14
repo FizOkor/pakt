@@ -6,15 +6,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Configure Turbopack to handle the problematic modules
-  turbopack: {
-    resolveAlias: {
-      'thread-stream': false,
-      'pino-pretty': false,
-      'worker_threads': false,
-    },
+  // Explicitly disable Turbopack for production build
+  experimental: {
+    turbo: undefined,
   },
-  // Keep webpack for fallback, but Turbopack will be used
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -36,6 +31,16 @@ const nextConfig = {
         'worker_threads': false,
       };
     }
+    
+    // Add module rules to ignore problematic packages
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    
+    config.module.rules.push({
+      test: /[\\/]node_modules[\\/](thread-stream|pino-pretty)[\\/]/,
+      use: 'null-loader',
+    });
+    
     return config;
   },
 }
