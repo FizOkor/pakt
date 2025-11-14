@@ -4,7 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { createConfig, http } from 'wagmi'
 import { storyTestnet } from 'viem/chains'
-import { injected, walletConnect } from 'wagmi/connectors'
+import { injected } from 'wagmi/connectors'
+import { useState, useEffect } from 'react'
 
 // Story Protocol testnet configuration
 const storyChain = {
@@ -20,13 +21,11 @@ const storyChain = {
   testnet: true,
 }
 
-const config = createConfig({
+// Create base config without WalletConnect (SSR safe)
+const baseConfig = createConfig({
   chains: [storyChain as any],
   connectors: [
-    injected(),
-    walletConnect({
-      projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || 'default-project-id',
-    }),
+    injected(), // This one is safe for SSR
   ],
   transports: {
     [storyChain.id]: http('https://testnet.storyrpc.io'),
@@ -36,6 +35,38 @@ const config = createConfig({
 const queryClient = new QueryClient()
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const [config, setConfig] = useState(baseConfig)
+
+  useEffect(() => {
+    // Dynamically import WalletConnect only on client side
+    const initializeWalletConnect = async () => {
+      try {
+        const { walletConnect } = await import('wagmi/connectors')
+        
+        const updatedConfig = createConfig({
+          chains: [storyChain as any],
+          connectors: [
+            injected(),
+            walletConnect({
+              projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_ID || 'default-project-id',
+              showQrModal: true, // Optional: show QR modal
+            }),
+          ],
+          transports: {
+            [storyChain.id]: http('https://testnet.storyrpc.io'),
+          },
+        })
+        
+        setConfig(updatedConfig)
+      } catch (error) {
+        console.warn('WalletConnect failed to load:', error)
+        // Keep using the base config without WalletConnect
+      }
+    }
+
+    initializeWalletConnect()
+  }, [])
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>

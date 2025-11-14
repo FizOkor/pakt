@@ -6,12 +6,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Explicitly disable Turbopack for production build
-  experimental: {
-    turbo: undefined,
-  },
+  // Use webpack explicitly to avoid Turbopack conflicts
   webpack: (config, { isServer }) => {
     if (!isServer) {
+      // Client-side fallbacks for Node.js modules
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
@@ -31,16 +29,6 @@ const nextConfig = {
         'worker_threads': false,
       };
     }
-    
-    // Add module rules to ignore problematic packages
-    config.module = config.module || {};
-    config.module.rules = config.module.rules || [];
-    
-    config.module.rules.push({
-      test: /[\\/]node_modules[\\/](thread-stream|pino-pretty)[\\/]/,
-      use: 'null-loader',
-    });
-    
     return config;
   },
 }
