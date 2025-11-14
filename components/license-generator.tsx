@@ -32,9 +32,9 @@ export default function LicenseGenerator() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">IP</span>
+              <span className="text-primary-foreground font-bold text-sm">P</span>
             </div>
-            <h1 className="text-lg font-bold text-foreground">IP License Generator</h1>
+            <h1 className="text-lg font-bold text-foreground">Pakt</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">Step {['upload', 'configure', 'confirm', 'complete'].indexOf(currentStep) + 1} of 4</div>
