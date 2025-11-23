@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const nextConfig = {
   output: 'standalone', 
   
-  outputFileTracingRoot: path.join(__dirname, '../../'), 
+  outputFileTracingRoot: path.join(__dirname), 
 
   typescript: {
     ignoreBuildErrors: true,
