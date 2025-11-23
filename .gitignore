@@ -10,6 +10,12 @@ lerna-debug.log*
 # Dependency directories
 node_modules/
 
+# next.js
+.next/
+/.next/
+/out/
+.swc/
+
 # Build output
 dist/
 dist-ssr/
