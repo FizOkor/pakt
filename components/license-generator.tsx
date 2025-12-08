@@ -12,12 +12,15 @@ type Step = 'upload' | 'configure' | 'confirm' | 'complete'
 interface LicenseData {
   title: string
   description: string
-  category: string
-  ipfsHash: string
-  licensingEnabled: boolean
-  royaltyPercentage: number
-  commercialUse: boolean
-  derivatives: boolean
+  createdAt: string
+  ipType: string
+  image: string
+  imageHash: string
+  mediaHash: string
+  mediaUrl: string  
+  mediaType: string
+  tags: string[]
+  creators: string[]
 }
 
 export default function LicenseGenerator() {
