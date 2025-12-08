@@ -26,6 +26,7 @@ interface LicenseData {
 export default function LicenseGenerator() {
   const [currentStep, setCurrentStep] = useState<Step>('upload')
   const [licenseData, setLicenseData] = useState<LicenseData | null>(null)
+  const [NFTData, setNFTData] = useState<LicenseData | null>(null)
   const { isConnected } = useAccount()
 
   return (
