@@ -7,6 +7,7 @@ import CreatorsInput from "@/components/ui/creators-input";
 
 interface UploadFormProps {
   onNext: (data: any) => void;
+  setNFTData?: (data: any) => void;
 }
 
 interface SocialMedia {
@@ -22,7 +23,7 @@ interface Creator {
   socialMedia: SocialMedia[];
 }
 
-export default function UploadForm({ onNext }: UploadFormProps) {
+export default function UploadForm({ onNext, setNFTData }: UploadFormProps) {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -87,6 +88,12 @@ export default function UploadForm({ onNext }: UploadFormProps) {
         formData.image && (await uploadFileToIPFS(formData.image));
       const fileHash = formData.file && (await uploadFileToIPFS(formData.file));
 
+      const nftMetadata = {
+        name: formData.title,
+        description: "Image of" + formData.description.toLowerCase() + ", " + formData.title,
+        image: `https://ipfs.io/ipfs/${imgHash}`,
+      };
+
       onNext({
         title: formData.title,
         description: formData.description,
@@ -100,6 +107,8 @@ export default function UploadForm({ onNext }: UploadFormProps) {
         tags: formData.tags,
         creators: formData.creators,
       });
+
+      setNFTData && setNFTData(nftMetadata);  
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

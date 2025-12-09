@@ -5,11 +5,11 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagm
 import { registerIPAsset } from '@/lib/register-ip'
 
 interface TransactionStatusProps {
-  licenseData: any
+  IPData: any
   onNext: () => void
 }
 
-export default function TransactionStatus({ licenseData, onNext }: TransactionStatusProps) {
+export default function TransactionStatus({ IPData, onNext }: TransactionStatusProps) {
   const [status, setStatus] = useState<'signing' | 'confirming' | 'complete' | 'error'>('signing')
   const [txHash, setTxHash] = useState('')
   const [ipId, setIpId] = useState('')
