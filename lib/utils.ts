@@ -19,6 +19,11 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
   }
 }
 
+export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
+  const response = await pinata.upload.public.json(jsonMetadata);
+  return response.cid;
+}
+
 // get hash from a file
 export async function getFileHash(file: File): Promise<Hex> {
   const arrayBuffer = await file.arrayBuffer();

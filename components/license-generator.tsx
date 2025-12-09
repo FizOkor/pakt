@@ -6,6 +6,8 @@ import UploadForm from "./upload-form";
 import LicenseConfig from "./license-config";
 import TransactionStatus from "./transaction-status";
 import WalletConnect from "./wallet-connect";
+import { uploadJSONToIPFS } from "@/lib/utils";
+import { createHash } from "crypto";
 
 type Step = "upload" | "configure" | "confirm" | "complete";
 
@@ -38,13 +40,33 @@ interface NFTData {
   youtube_url?: string;
 }
 
-
 export default function LicenseGenerator() {
   const [currentStep, setCurrentStep] = useState<Step>("upload");
   const [IPData, setIPData] = useState<IPData | null>(null);
   const [NFTData, setNFTData] = useState<NFTData | null>(null);
   const [licenseData, setLicenseData] = useState({});
   const { isConnected } = useAccount();
+  const [IPMetadata, setIPMetadata] = useState({});
+
+  const uploadDataToIPFS = async () => {
+    if (!IPData || !NFTData) return;
+
+    const ipIpfsHash = await uploadJSONToIPFS(IPData);
+    const ipHash = createHash("sha256")
+      .update(JSON.stringify(IPData))
+      .digest("hex");
+    const nftIpfsHash = await uploadJSONToIPFS(NFTData);
+    const nftHash = createHash("sha256")
+      .update(JSON.stringify(NFTData))
+      .digest("hex");
+
+    setIPMetadata({
+      ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsHash}`,
+      ipMetadataHash: `0x${ipHash}`,
+      nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsHash}`,
+      nftMetadataHash: `0x${nftHash}`
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,10 +141,13 @@ export default function LicenseGenerator() {
                 alert("Please connect your wallet first");
                 return;
               }
-              setCurrentStep("confirm");
+              uploadDataToIPFS().then(() => {
+                setCurrentStep("confirm");
+              });
+              //
+              // setCurrentStep("confirm");
             }}
             IPData={IPData}
-
             onUpdate={(updates) =>
               setLicenseData({ ...licenseData, ...updates })
             }
@@ -130,7 +155,8 @@ export default function LicenseGenerator() {
         )}
         {currentStep === "confirm" && IPData && (
           <TransactionStatus
-            IPData={IPData}
+            IPMetadata={IPMetadata}
+            licenseData={licenseData}
             onNext={() => setCurrentStep("complete")}
           />
         )}
