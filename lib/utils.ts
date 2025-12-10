@@ -7,12 +7,34 @@ const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
   pinataGateway: "gray-wonderful-wildfowl-51.mypinata.cloud"
 })
-// Pinata IPFS uploads
+// Pinata IPFS upload
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
-    const fileJSON = await pinata.upload.public.file(file) 
+    const urlResponse = await fetch(
+      `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
+    );
+    
+    if (!urlResponse.ok) {
+      throw new Error('Failed to get upload URL');
+    }
+    
+    const { url: signedUrl } = await urlResponse.json();
+    console.log("Signed URL:", signedUrl);
+    
+    const uploadResponse = await fetch(signedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type,
+      },
+      body: file,
+    });
 
-    return fileJSON.cid;
+    if (!uploadResponse.ok) {
+      throw new Error('Upload failed');
+    }
+
+    const result = await uploadResponse.json();
+    return result.cid
   } catch (error) {
     console.error("IPFS upload failed:", error);
     throw new Error("Failed to upload to IPFS");
