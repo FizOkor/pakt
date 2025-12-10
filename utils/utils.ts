@@ -2,11 +2,11 @@ import { http } from "viem";
 import { Account, privateKeyToAccount, Address } from "viem/accounts";
 import { StoryClient, StoryConfig } from "@story-protocol/core-sdk";
 
-const rawPrivateKey = process.env.WALLET_PRIVATE_KEY?.trim();
+const rawPrivateKey = process.env.NEXT_PUBLIC_WALLET_PRIVATE_KEY?.trim();
 
 // Throw an error if the variable is missing
 if (!rawPrivateKey) {
-    throw new Error("Missing WALLET_PRIVATE_KEY environment variable.");
+    throw new Error("Missing NEXT_PUBLIC_WALLET_PRIVATE_KEY environment variable.");
 }
 
 const prefixedPrivateKey = rawPrivateKey.startsWith("0x") ? rawPrivateKey : `0x${rawPrivateKey}`;
