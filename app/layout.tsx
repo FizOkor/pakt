@@ -1,9 +1,8 @@
-'use client';
-
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { Providers } from './providers'
+// import { Providers } from './providers'
+import dynamic from 'next/dynamic';
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -31,6 +30,10 @@ export const metadata: Metadata = {
   //   apple: '/apple-icon.png',
   // },
 }
+
+const Providers = dynamic(() => import('./providers').then(mod => mod.Providers), {
+  ssr: false,
+});
 
 export default function RootLayout({
   children,
