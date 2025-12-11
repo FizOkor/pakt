@@ -11,9 +11,14 @@ const pinata = new PinataSDK({
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
     const urlRequest = await fetch(`/api/pinata/upload}`);
+
+    console.log("Signed URL response:", urlRequest);
     const urlResponse = await urlRequest.json();
-    const upload = await pinata.upload.public.file(file).url(urlResponse.url);
+
+    console.log("Signed URL:", urlResponse.url);
     
+    const upload = await pinata.upload.public.file(file).url(urlResponse.url);
+
     return upload.cid;
   } catch (error) {
     console.error("IPFS upload failed:", error);
