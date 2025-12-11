@@ -50,6 +50,8 @@ export default function LicenseGenerator() {
 
   const uploadDataToIPFS = async () => {
     if (!IPData || !NFTData) return;
+    console.log("IPData:", IPData);
+    console.log("NFTData:", NFTData);
 
     const ipIpfsHash = await uploadJSONToIPFS(IPData);
     const ipHash = createHash("sha256")
