@@ -17,10 +17,20 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
 
     console.log('Using signed URL:', signedUrl);
 
-    const uploadResponse = await pinata.upload.public.file(file);
-
+    // PUT request
+    const uploadResponse = await fetch(signedUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
+        'Content-Type': 'application/octet-stream',
+      },
+      body: file,
+    });
     
-    return uploadResponse.cid
+
+    const result = await uploadResponse.json();
+    console.log('Upload successful, result:', result);
+    return result.cid || result.IpfsHash;
 
   } catch (error) {
     console.error("IPFS upload failed:", error);
