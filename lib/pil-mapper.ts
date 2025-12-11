@@ -19,22 +19,25 @@ interface LicenseConfig {
 }
 
 export function configToPILTerms(config: LicenseConfig) {
-  if (!config.licensingEnabled) return [];
+  
+  if (!config.licensingEnabled) {
+    console.log('Licensing disabled, returning empty array');
+    return [];
+  }
 
-  const baseOverride = {
-    commercialAttribution: config.attributionRequired,
-    derivativesAttribution: config.attributionRequired,
-    derivativesAllowed: config.derivatives,
-  };
+  // override object for attribution and derivatives
+  const override = config.attributionRequired 
+    ? { attribution: true, derivativesAllowed: config.derivatives }
+    : { derivativesAllowed: config.derivatives };
 
   switch(config.licenseType) {
     case 'commercialRemix':
       return [{
         terms: PILFlavor.commercialRemix({
+          commercialRevShare: config.royaltyPercentage,
           defaultMintingFee: parseEther(config.mintingFee.toString()),
           currency: WIP_TOKEN_ADDRESS,
-          commercialRevShare: config.royaltyPercentage,
-          override: baseOverride,
+          override,
         }),
       }];
 
@@ -43,28 +46,25 @@ export function configToPILTerms(config: LicenseConfig) {
         terms: PILFlavor.commercialUse({
           defaultMintingFee: parseEther(config.mintingFee.toString()),
           currency: WIP_TOKEN_ADDRESS,
-          override: baseOverride,
+          override,
         }),
       }];
 
     case 'nonCommercialSocialRemixing':
       return [{
-        terms: PILFlavor.nonCommercialSocialRemixing({
-          override: {
-            derivativesAllowed: config.derivatives,
-            // Non-commercial might have different attribution field
-          },
-        }),
+        terms: PILFlavor.nonCommercialSocialRemixing({ override }),
       }];
 
     case 'creativeCommonsAttribution':
       return [{
         terms: PILFlavor.creativeCommonsAttribution({
           currency: WIP_TOKEN_ADDRESS,
-          override: {
-            derivativesAllowed: config.derivatives,
-          },
+          override,
         }),
       }];
+
+    default:
+      // Type safety fallback
+      throw new Error(`Unsupported license type: ${config.licenseType}`);
   }
 }

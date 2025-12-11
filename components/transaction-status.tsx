@@ -13,8 +13,7 @@ import {
 } from "@story-protocol/core-sdk";
 import { client } from "../utils/utils";
 import { uploadJSONToIPFS } from "../lib/utils";
-import { createHash } from "crypto";
-import { Address, parseEther } from "viem";
+import { configToPILTerms } from "../lib/pil-mapper";
 
 interface TransactionStatusProps {
   IPMetadata: any;
@@ -72,13 +71,18 @@ export default function TransactionStatus({
   }, [mounted, isConnected]);
 
   const executeIPRegistration = async () => {
+     if (!licenseData) {
+      throw new Error('License configuration is required');
+    }
+
+    const licenseTermsData = configToPILTerms(licenseData)
     console.log("licenseData", licenseData)
     const response = await client.ipAsset.registerIpAsset({
       nft: {
         type: "mint",
         spgNftContract: "0xc32A8a0FF3beDDDa58393d022aF433e78739FAbc",
       },
-      licenseTermsData: licenseData,
+      licenseTermsData: licenseTermsData,
       ipMetadata: IPMetadata,
     });
 

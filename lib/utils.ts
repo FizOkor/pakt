@@ -6,28 +6,29 @@ import { findPackageJSON } from "module";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
-  pinataGateway: "coffee-implicit-tuna-707.mypinata.cloud"
-})
+  pinataGateway: "coffee-implicit-tuna-707.mypinata.cloud",
+});
 // Pinata IPFS upload
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
-    const urlRequest = await fetch(
-      `/api/pinata/upload`
-    );
+    const urlRequest = await fetch(`/api/pinata/upload`);
     const { url: signedUrl } = await urlRequest.json();
 
+    const timestamp = Date.now();
+    const customName = `ip-asset-${timestamp}.${file.name.split(".").pop()}`;
+
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('network', 'public');
-    
+    formData.append("file", file, customName);
+    formData.append("network", "public");
+
     const uploadResponse = await fetch(signedUrl, {
-      method: 'POST',
+      method: "POST",
       body: formData,
-    });    
+    });
 
     const { data } = await uploadResponse.json();
-    console.log('Upload successful');
-    
+    console.log("Upload successful");
+
     return data.cid;
   } catch (error) {
     console.error("IPFS upload failed:", error);
@@ -36,28 +37,30 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
 }
 
 export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
-   try {
-    const urlRequest = await fetch(
-      `/api/pinata/upload`
-    );
+  try {
+    const urlRequest = await fetch(`/api/pinata/upload`);
     const { url: signedUrl } = await urlRequest.json();
 
-    const formData = new FormData();
+    const timestamp = Date.now();
+    const jsonFileName = `metadata-${timestamp}.json`;
 
     const jsonString = JSON.stringify(jsonMetadata, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const file = new File([blob], 'metadata.json', { type: 'application/json' });
-
-    formData.append('file', file);
-    formData.append('network', 'public');
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const file = new File([blob], jsonFileName, {
+      type: "application/json",
+    });
     
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("network", "public");
+
     const uploadResponse = await fetch(signedUrl, {
-      method: 'POST',
+      method: "POST",
       body: formData,
-    });    
+    });
 
     const { data } = await uploadResponse.json();
-    console.log('Upload successful');
+    console.log("Upload successful");
 
     return data.cid;
   } catch (error) {
@@ -78,7 +81,7 @@ export async function getHashFromUrl(url: string): Promise<Hex> {
   const response = await axios.get(url, { responseType: "arraybuffer" });
   const buffer = Buffer.from(response.data);
   const hash = "0x" + createHash("sha256").update(buffer).digest("hex");
-  
+
   return hash as Hex;
 }
 

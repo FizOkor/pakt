@@ -141,7 +141,7 @@ const licenseTypes = [
       </div>
 
       {/* Royalty Percentage & minting Fee - only show if commercial */}
-      {config.commercialUse && (
+      {config.licenseType === 'commercialRemix' && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-sm font-medium text-foreground">Royalty & Fees</label>

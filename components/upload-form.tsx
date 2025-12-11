@@ -90,7 +90,7 @@ export default function UploadForm({ onNext, setNFTData }: UploadFormProps) {
 
       const nftMetadata = {
         name: formData.title,
-        description: "Image of" + formData.description.toLowerCase() + ", " + formData.title,
+        description: "Image of " + formData.description.toLowerCase() + ", " + formData.title,
         image: `https://ipfs.io/ipfs/${imgHash}`,
       };
 
