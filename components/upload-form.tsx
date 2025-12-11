@@ -284,7 +284,7 @@ export default function UploadForm({ onNext, setNFTData }: UploadFormProps) {
 
       {/* ipType */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">ipType</label>
+        <label className="text-sm font-medium text-foreground">Category</label>
         <select
           className="w-full px-4 py-2 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
           value={formData.ipType}

@@ -9,13 +9,15 @@ const pinata = new PinataSDK({
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const fileName = searchParams.get('fileName') || 'upload';
+    const fileName = searchParams.get('fileName');
+    console.log("fileName:", fileName);
 
     // Create a signed URL
     const url = await pinata.upload.public.createSignedURL({
       expires: 300,
       name: fileName,
     });
+    console.log("Generated signed URL:", url);
 
     return NextResponse.json({ url });
   } catch (error) {

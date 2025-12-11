@@ -5,7 +5,7 @@ import { createHash } from "crypto";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
-  pinataGateway: "gray-wonderful-wildfowl-51.mypinata.cloud"
+  pinataGateway: "coffee-implicit-tuna-707.mypinata.cloud"
 })
 // Pinata IPFS upload
 export async function uploadFileToIPFS(file: File): Promise<string> {
@@ -13,7 +13,7 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
     const urlResponse = await fetch(
       `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
     );
-    
+    console.log("urlResponse:", urlResponse)
     if (!urlResponse.ok) {
       throw new Error('Failed to get upload URL');
     }
