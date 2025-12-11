@@ -14,6 +14,7 @@ import {
 import { client } from "../utils/utils";
 import { uploadJSONToIPFS } from "../lib/utils";
 import { configToPILTerms } from "../lib/pil-mapper";
+import { getTransactionUrl, getIPAssetUrl } from '@/lib/explorer-urls';
 
 interface TransactionStatusProps {
   IPMetadata: any;
@@ -151,7 +152,7 @@ export default function TransactionStatus({
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Transaction Hash:</span>
             <a
-              href={`https://www.storyscan.io/tx/${txHash}`}
+              href={getTransactionUrl(txHash)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary font-mono hover:underline"
@@ -161,9 +162,14 @@ export default function TransactionStatus({
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">IP Asset ID:</span>
-            <code className="text-primary font-mono">
+            <a
+              href={getIPAssetUrl(ipId)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary font-mono hover:underline"
+            >
               {ipId.slice(0, 10)}...{ipId.slice(-8)}
-            </code>
+            </a>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Network:</span>
