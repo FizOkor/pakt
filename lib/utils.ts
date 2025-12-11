@@ -2,6 +2,7 @@ import { PinataSDK } from "pinata";
 import { toHex, Hex } from "viem";
 import axios from "axios";
 import { createHash } from "crypto";
+import { findPackageJSON } from "module";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
@@ -10,27 +11,24 @@ const pinata = new PinataSDK({
 // Pinata IPFS upload
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
-    const urlResponse = await fetch(
+    const urlRequest = await fetch(
       `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
     );
-    const { url: signedUrl } = await urlResponse.json();
-
+    const { url: signedUrl } = await urlRequest.json();
     console.log('Using signed URL:', signedUrl);
 
-    // PUT request
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('network', 'public');
+    
     const uploadResponse = await fetch(signedUrl, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`,
-        'Content-Type': 'application/octet-stream',
-      },
-      body: file,
-    });
-    
+      body: formData,
+    });    
 
     const result = await uploadResponse.json();
     console.log('Upload successful, result:', result);
-    return result.cid || result.IpfsHash;
+    return result.cid;
 
   } catch (error) {
     console.error("IPFS upload failed:", error);
