@@ -26,9 +26,10 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
       body: formData,
     });    
 
-    const result = await uploadResponse.json();
-    console.log('Upload successful, result:', result);
-    return result.cid;
+    const {data} = await uploadResponse.json();
+    console.log('Upload successful, result:', data);
+    console.log('IPFS CID:', data.cid);
+    return data.cid;
 
   } catch (error) {
     console.error("IPFS upload failed:", error);
