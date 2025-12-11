@@ -72,6 +72,7 @@ export default function TransactionStatus({
   }, [mounted, isConnected]);
 
   const executeIPRegistration = async () => {
+    console.log("licenseData", licenseData)
     const response = await client.ipAsset.registerIpAsset({
       nft: {
         type: "mint",

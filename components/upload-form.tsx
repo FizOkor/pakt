@@ -87,8 +87,6 @@ export default function UploadForm({ onNext, setNFTData }: UploadFormProps) {
       const imgHash =
         formData.image && (await uploadFileToIPFS(formData.image));
       const fileHash = formData.file && (await uploadFileToIPFS(formData.file));
-      console.log("Image IPFS Hash:", imgHash);
-      console.log("File IPFS Hash:", fileHash);
 
       const nftMetadata = {
         name: formData.title,
