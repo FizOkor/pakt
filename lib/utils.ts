@@ -12,7 +12,7 @@ const pinata = new PinataSDK({
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
     const urlRequest = await fetch(
-      `/api/pinata/upload}`
+      `/api/pinata/upload`
     );
     const { url: signedUrl } = await urlRequest.json();
 
@@ -38,7 +38,7 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
 export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
    try {
     const urlRequest = await fetch(
-      `/api/pinata/upload}`
+      `/api/pinata/upload`
     );
     const { url: signedUrl } = await urlRequest.json();
 
