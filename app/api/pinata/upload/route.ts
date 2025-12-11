@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     // Create a signed URL
     const url = await pinata.upload.public.createSignedURL({
       expires: 300,
-      name: fileName,
+      name: fileName || 'untitled',
     });
     console.log("Generated signed URL:", url);
 
