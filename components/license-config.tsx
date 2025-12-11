@@ -82,7 +82,7 @@ const licenseTypes = [
       <div className="bg-card border border-border rounded-lg p-6 space-y-3">
         <h3 className="font-semibold text-foreground">{IPData?.title}</h3>
         <p className="text-sm text-muted-foreground line-clamp-2">{IPData?.description}</p>
-        <div className="text-xs text-muted-foreground">Category: {IPData?.category}</div>
+        <div className="text-xs text-muted-foreground">Category: {IPData?.ipType}</div>
       </div>
 
       {/* License Type Selection */}

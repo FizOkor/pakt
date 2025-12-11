@@ -12,10 +12,9 @@ const pinata = new PinataSDK({
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
     const urlRequest = await fetch(
-      `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
+      `/api/pinata/upload}`
     );
     const { url: signedUrl } = await urlRequest.json();
-    console.log('Using signed URL:', signedUrl);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -26,11 +25,10 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
       body: formData,
     });    
 
-    const {data} = await uploadResponse.json();
-    console.log('Upload successful, result:', data);
-    console.log('IPFS CID:', data.cid);
+    const { data } = await uploadResponse.json();
+    console.log('Upload successful');
+    
     return data.cid;
-
   } catch (error) {
     console.error("IPFS upload failed:", error);
     throw new Error("Failed to upload to IPFS");
@@ -38,8 +36,30 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
 }
 
 export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
-  const response = await pinata.upload.public.json(jsonMetadata);
-  return response.cid;
+   try {
+    const urlRequest = await fetch(
+      `/api/pinata/upload}`
+    );
+    const { url: signedUrl } = await urlRequest.json();
+
+    const formData = new FormData();
+    const json = JSON.stringify(jsonMetadata)
+    formData.append('file', json);
+    formData.append('network', 'public');
+    
+    const uploadResponse = await fetch(signedUrl, {
+      method: 'POST',
+      body: formData,
+    });    
+
+    const { data } = await uploadResponse.json();
+    console.log('Upload successful');
+
+    return data.cid;
+  } catch (error) {
+    console.error("IPFS upload failed:", error);
+    throw new Error("Failed to upload to IPFS");
+  }
 }
 
 // get hash from a file
