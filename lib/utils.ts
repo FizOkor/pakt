@@ -5,21 +5,23 @@ import { createHash } from "crypto";
 
 const pinata = new PinataSDK({
   pinataJwt: process.env.PINATA_JWT,
-  pinataGateway: "coffee-implicit-tuna-707.mypinata.cloud",
-});
+  pinataGateway: "coffee-implicit-tuna-707.mypinata.cloud"
+})
 // Pinata IPFS upload
 export async function uploadFileToIPFS(file: File): Promise<string> {
   try {
-    const urlRequest = await fetch(`/api/pinata/upload}`);
+    const urlResponse = await fetch(
+      `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
+    );
+    const { url: signedUrl } = await urlResponse.json();
 
-    console.log("Signed URL response:", urlRequest);
-    const urlResponse = await urlRequest.json();
+    console.log('Using signed URL:', signedUrl);
 
-    console.log("Signed URL:", urlResponse.url);
+    const uploadResponse = await pinata.upload.public.file(file);
+
     
-    const upload = await pinata.upload.public.file(file).url(urlResponse.url);
+    return uploadResponse.cid
 
-    return upload.cid;
   } catch (error) {
     console.error("IPFS upload failed:", error);
     throw new Error("Failed to upload to IPFS");
@@ -43,7 +45,7 @@ export async function getHashFromUrl(url: string): Promise<Hex> {
   const response = await axios.get(url, { responseType: "arraybuffer" });
   const buffer = Buffer.from(response.data);
   const hash = "0x" + createHash("sha256").update(buffer).digest("hex");
-
+  
   return hash as Hex;
 }
 
