@@ -43,8 +43,12 @@ export async function uploadJSONToIPFS(jsonMetadata: any): Promise<string> {
     const { url: signedUrl } = await urlRequest.json();
 
     const formData = new FormData();
-    const json = JSON.stringify(jsonMetadata)
-    formData.append('file', json);
+
+    const jsonString = JSON.stringify(jsonMetadata, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const file = new File([blob], 'metadata.json', { type: 'application/json' });
+
+    formData.append('file', file);
     formData.append('network', 'public');
     
     const uploadResponse = await fetch(signedUrl, {
