@@ -48,6 +48,7 @@ export default function TransactionStatus({
         setStatus("signing");
 
         const response = await executeIPRegistration();
+        console.log(response)
 
         setStatus("confirming");
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -76,7 +77,7 @@ export default function TransactionStatus({
     }
 
     const licenseTermsData = configToPILTerms(licenseData)
-    console.log("licenseData", licenseData)
+    
     const response = await client.ipAsset.registerIpAsset({
       nft: {
         type: "mint",
