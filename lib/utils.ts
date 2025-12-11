@@ -13,28 +13,29 @@ export async function uploadFileToIPFS(file: File): Promise<string> {
     const urlResponse = await fetch(
       `/api/pinata/upload?fileName=${encodeURIComponent(file.name)}`
     );
-    console.log("urlResponse:", urlResponse)
-    if (!urlResponse.ok) {
-      throw new Error('Failed to get upload URL');
-    }
-    
     const { url: signedUrl } = await urlResponse.json();
-    console.log("Signed URL:", signedUrl);
-    
+
+    console.log('Using signed URL:', signedUrl);
+
+    // PUT request
     const uploadResponse = await fetch(signedUrl, {
       method: 'PUT',
       headers: {
-        'Content-Type': file.type,
+        'Content-Type': 'application/octet-stream',
       },
       body: file,
     });
-
+    
     if (!uploadResponse.ok) {
-      throw new Error('Upload failed');
+      const errorText = await uploadResponse.text();
+      console.error('Upload failed with response:', errorText);
+      throw new Error(`Upload failed: ${uploadResponse.status}`);
     }
 
     const result = await uploadResponse.json();
-    return result.cid
+    console.log('Upload successful, result:', result);
+    return result.cid || result.IpfsHash;
+
   } catch (error) {
     console.error("IPFS upload failed:", error);
     throw new Error("Failed to upload to IPFS");
